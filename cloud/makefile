@@ -10,6 +10,7 @@ plan: init
 apply: init plan
 	terraform apply tf.plan
 
-delete:
-	terraform delete
-
+destroy: init
+	terraform destroy \
+	-var-file="tf/vars/terraform.tfvars" \
+	tf/.
