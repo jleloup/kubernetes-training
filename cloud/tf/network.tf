@@ -13,18 +13,14 @@ resource "aws_vpc" "vpc_kube" {
   }
 }
 
-resource "aws_vpc_ipv4_cidr_block_association" "secondary_cidr" {
-  vpc_id     = aws_vpc.vpc_kube.id
-  cidr_block = "10.200.0.0/16"
-}
 
-resource "aws_subnet" "control_plane" {
+resource "aws_subnet" "cka_training" {
   vpc_id     = aws_vpc.vpc_kube.id
   cidr_block = "10.240.0.0/16"
 
   tags = merge(
     local.common_tags,
-    { Name = "${local.prefix}_control_plane" }
+    { Name = "${local.prefix}_subnet" }
   )
 
   lifecycle {
@@ -32,22 +28,8 @@ resource "aws_subnet" "control_plane" {
   }
 }
 
-resource "aws_subnet" "data_plane" {
-  vpc_id     = aws_vpc.vpc_kube.id
-  cidr_block = "10.200.0.0/16"
-
-  tags = merge(
-    local.common_tags,
-    { Name = "${local.prefix}_data_plane" }
-  )
-
-  lifecycle {
-    ignore_changes = [tags["AutoTag_Creator"]]
-  }
-}
-
-resource "aws_security_group" "ssh_access" {
-  description = "SSH access on Kubernetes training instances"
+resource "aws_security_group" "public_access" {
+  description = "Public access for CKA training instances (${var.owner}"
   name        = "${local.prefix}_ssh_sg"
   vpc_id      = aws_vpc.vpc_kube.id
 
@@ -60,7 +42,7 @@ resource "aws_security_group" "ssh_access" {
 
   tags = merge(
     local.common_tags,
-    { Name = "${local.prefix}_ssh_sg" }
+    { Name = "${local.prefix}_public" }
   )
 
   lifecycle {
@@ -68,9 +50,9 @@ resource "aws_security_group" "ssh_access" {
   }
 }
 
-resource "aws_security_group" "masters" {
-  description = "Access for Kubernetes training master instances"
-  name        = "${local.prefix}_master_sg"
+resource "aws_security_group" "kubernetes_api" {
+  description = "Access for K8S API."
+  name        = "${local.prefix}_api"
   vpc_id      = aws_vpc.vpc_kube.id
 
   ingress {
@@ -82,7 +64,7 @@ resource "aws_security_group" "masters" {
 
   tags = merge(
     local.common_tags,
-    { Name = "${local.prefix}_master_sg" }
+    { Name = "${local.prefix}_api" }
   )
 
   lifecycle {
@@ -91,7 +73,7 @@ resource "aws_security_group" "masters" {
 }
 
 resource "aws_security_group" "internal" {
-  description = "Internal communications for Kubernetes training instances"
+  description = "Internal communications for CKA instances (${var.owner})"
   name        = "${local.prefix}_internal_sg"
   vpc_id      = aws_vpc.vpc_kube.id
 
@@ -104,7 +86,7 @@ resource "aws_security_group" "internal" {
 
   tags = merge(
     local.common_tags,
-    { Name = "${local.prefix}_internal_sg" }
+    { Name = "${local.prefix}_internal" }
   )
 
   lifecycle {
