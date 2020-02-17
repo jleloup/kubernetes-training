@@ -1,1 +1,4 @@
 .vagrant/
+cloud/tf/*.plan
+cloud/.terraform
+.vscode/
