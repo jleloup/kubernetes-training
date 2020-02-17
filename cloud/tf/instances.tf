@@ -7,17 +7,16 @@ resource "aws_instance" "masters" {
 
   count         = 3
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
+  instance_type = "t3.small"
   key_name      = aws_key_pair.cka_user_key.key_name
 
   subnet_id                   = aws_subnet.cka_training.id
-  private_ip                  = "10.240.0.${count.index}"
+  private_ip                  = "10.240.0.${count.index + 11}"
   associate_public_ip_address = true
 
   vpc_security_group_ids = [
-    aws_security_group.public_access.id,
-    aws_security_group.kubernetes_api.id,
-    aws_security_group.internal.id,
+    aws_security_group.public.id,
+    aws_security_group.private.id,
   ]
 
   tags = merge(
@@ -34,16 +33,16 @@ resource "aws_instance" "workers" {
 
   count         = 3
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t2.micro"
+  instance_type = "t3.small"
   key_name      = aws_key_pair.cka_user_key.key_name
 
   subnet_id                   = aws_subnet.cka_training.id
-  private_ip                  = "10.240.0.${count.index + 100}"
+  private_ip                  = "10.240.0.${count.index + 101}"
   associate_public_ip_address = true
 
   vpc_security_group_ids = [
-    aws_security_group.public_access.id,
-    aws_security_group.internal.id,
+    aws_security_group.public.id,
+    aws_security_group.private.id,
   ]
 
   tags = merge(

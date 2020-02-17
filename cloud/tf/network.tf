@@ -13,10 +13,10 @@ resource "aws_vpc" "vpc_kube" {
   }
 }
 
-
 resource "aws_subnet" "cka_training" {
-  vpc_id     = aws_vpc.vpc_kube.id
-  cidr_block = "10.240.0.0/16"
+  availability_zone = "us-east-1a"
+  cidr_block        = "10.240.0.0/16"
+  vpc_id            = aws_vpc.vpc_kube.id
 
   tags = merge(
     local.common_tags,
@@ -28,9 +28,9 @@ resource "aws_subnet" "cka_training" {
   }
 }
 
-resource "aws_security_group" "public_access" {
+resource "aws_security_group" "public" {
   description = "Public access for CKA training instances (${var.owner}"
-  name        = "${local.prefix}_ssh_sg"
+  name        = "${local.prefix}_public"
   vpc_id      = aws_vpc.vpc_kube.id
 
   ingress {
@@ -38,6 +38,13 @@ resource "aws_security_group" "public_access" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = local.allowed_ips
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   tags = merge(
@@ -50,31 +57,18 @@ resource "aws_security_group" "public_access" {
   }
 }
 
-resource "aws_security_group" "kubernetes_api" {
-  description = "Access for K8S API."
-  name        = "${local.prefix}_api"
-  vpc_id      = aws_vpc.vpc_kube.id
-
-  ingress {
-    from_port   = 6443
-    to_port     = 6443
-    protocol    = "tcp"
-    cidr_blocks = local.allowed_ips
-  }
-
-  tags = merge(
-    local.common_tags,
-    { Name = "${local.prefix}_api" }
-  )
-
-  lifecycle {
-    ignore_changes = [tags["AutoTag_Creator"]]
-  }
+resource "aws_security_group_rule" "kubernetes_api" {
+  type              = "ingress"
+  security_group_id = aws_security_group.public.id
+  from_port         = 6443
+  to_port           = 6443
+  protocol          = "tcp"
+  cidr_blocks       = local.allowed_ips
 }
 
-resource "aws_security_group" "internal" {
+resource "aws_security_group" "private" {
   description = "Internal communications for CKA instances (${var.owner})"
-  name        = "${local.prefix}_internal_sg"
+  name        = "${local.prefix}_private"
   vpc_id      = aws_vpc.vpc_kube.id
 
   ingress {
@@ -84,12 +78,56 @@ resource "aws_security_group" "internal" {
     self      = true
   }
 
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
   tags = merge(
     local.common_tags,
-    { Name = "${local.prefix}_internal" }
+    { Name = "${local.prefix}_private" }
   )
 
   lifecycle {
     ignore_changes = [tags["AutoTag_Creator"]]
   }
+}
+
+resource "aws_internet_gateway" "internet_gateway" {
+  vpc_id = aws_vpc.vpc_kube.id
+
+  tags = merge(
+    local.common_tags,
+    { Name = "${local.prefix}_ig" }
+  )
+
+  lifecycle {
+    ignore_changes = [tags["AutoTag_Creator"]]
+  }
+}
+
+resource "aws_route_table" "rt_public" {
+  vpc_id = aws_vpc.vpc_kube.id
+
+  tags = merge(
+    local.common_tags,
+    { Name = "${local.prefix}_rt" }
+  )
+
+  lifecycle {
+    ignore_changes = [tags["AutoTag_Creator"]]
+  }
+}
+
+resource "aws_route" "route" {
+  route_table_id         = aws_route_table.rt_public.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_internet_gateway.internet_gateway.id
+}
+
+resource "aws_route_table_association" "public_subnet" {
+  subnet_id      = aws_subnet.cka_training.id
+  route_table_id = aws_route_table.rt_public.id
 }
