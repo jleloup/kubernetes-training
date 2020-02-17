@@ -21,6 +21,10 @@ resource "aws_instance" "masters" {
     local.common_tags,
     { Name = "${local.prefix}_master_${count.index}" }
   )
+
+  lifecycle {
+    ignore_changes = [tags["AutoTag_Creator"]]
+  }
 }
 
 resource "aws_instance" "workers" {
@@ -40,4 +44,8 @@ resource "aws_instance" "workers" {
     local.common_tags,
     { Name = "${local.prefix}_workers_${count.index}" }
   )
+
+  lifecycle {
+    ignore_changes = [tags["AutoTag_Creator"]]
+  }
 }

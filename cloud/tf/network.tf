@@ -7,6 +7,10 @@ resource "aws_vpc" "vpc_kube" {
     local.common_tags,
     { Name = "${local.prefix}_vpc" }
   )
+
+  lifecycle {
+    ignore_changes = [tags["AutoTag_Creator"]]
+  }
 }
 
 resource "aws_vpc_ipv4_cidr_block_association" "secondary_cidr" {
@@ -22,6 +26,10 @@ resource "aws_subnet" "control_plane" {
     local.common_tags,
     { Name = "${local.prefix}_control_plane" }
   )
+
+  lifecycle {
+    ignore_changes = [tags["AutoTag_Creator"]]
+  }
 }
 
 resource "aws_subnet" "data_plane" {
@@ -32,6 +40,10 @@ resource "aws_subnet" "data_plane" {
     local.common_tags,
     { Name = "${local.prefix}_data_plane" }
   )
+
+  lifecycle {
+    ignore_changes = [tags["AutoTag_Creator"]]
+  }
 }
 
 resource "aws_security_group" "ssh_access" {
@@ -44,6 +56,15 @@ resource "aws_security_group" "ssh_access" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = local.allowed_ips
+  }
+
+  tags = merge(
+    local.common_tags,
+    { Name = "${local.prefix}_ssh_sg" }
+  )
+
+  lifecycle {
+    ignore_changes = [tags["AutoTag_Creator"]]
   }
 }
 
@@ -58,6 +79,15 @@ resource "aws_security_group" "masters" {
     protocol    = "tcp"
     cidr_blocks = local.allowed_ips
   }
+
+  tags = merge(
+    local.common_tags,
+    { Name = "${local.prefix}_master_sg" }
+  )
+
+  lifecycle {
+    ignore_changes = [tags["AutoTag_Creator"]]
+  }
 }
 
 resource "aws_security_group" "internal" {
@@ -70,5 +100,14 @@ resource "aws_security_group" "internal" {
     to_port   = 65535
     protocol  = "tcp"
     self      = true
+  }
+
+  tags = merge(
+    local.common_tags,
+    { Name = "${local.prefix}_internal_sg" }
+  )
+
+  lifecycle {
+    ignore_changes = [tags["AutoTag_Creator"]]
   }
 }
