@@ -21,7 +21,10 @@ resource "aws_instance" "masters" {
 
   tags = merge(
     local.common_tags,
-    { Name = "${local.prefix}_master_${count.index}" }
+    {
+      Name = "${local.prefix}_master_${count.index}"
+      type = "master"
+    }
   )
 
   lifecycle {
@@ -47,7 +50,10 @@ resource "aws_instance" "workers" {
 
   tags = merge(
     local.common_tags,
-    { Name = "${local.prefix}_workers_${count.index}" }
+    {
+      Name = "${local.prefix}_workers_${count.index}"
+      type = "worker"
+    }
   )
 
   lifecycle {

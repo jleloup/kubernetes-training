@@ -1,0 +1,9 @@
+---
+- hosts: "localhost"
+  name: Initialize CA
+  gather_facts: false
+
+  tasks:
+    - name: Debug
+      debug:
+        msg: "Init CA"

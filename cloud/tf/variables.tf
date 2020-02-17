@@ -27,6 +27,7 @@ locals {
     region     = var.region
     owner      = var.owner
     repository = var.repository
+    cka        = "true"
   }
 
   allowed_ips = [
