@@ -2,3 +2,5 @@
 **/*.plan
 cloud/.terraform
 .vscode/
+**/*.csr
+**/*.pem

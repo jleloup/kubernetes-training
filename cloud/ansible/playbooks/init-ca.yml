@@ -4,6 +4,20 @@
   gather_facts: false
 
   tasks:
-    - name: Debug
-      debug:
-        msg: "Init CA"
+    - name: Generate root CA certificate & key
+      shell: cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+      args:
+        chdir: files/
+        creates: ca.pem
+
+    - name: Generate admin CA certificate & key
+      shell: |
+        cfssl gencert \
+        -ca=ca.pem \
+        -ca-key=ca-key.pem \
+        -config=ca-config.json \
+        -profile=kubernetes \
+        admin-csr.json | cfssljson -bare admin
+      args:
+        chdir: files/
+        creates: admin.pem
