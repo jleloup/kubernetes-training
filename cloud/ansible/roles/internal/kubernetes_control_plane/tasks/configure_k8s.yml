@@ -1,0 +1,21 @@
+---
+- name: Make K8S configuration dir
+  become: true
+  file:
+    path: "{{ k8s_conf_dir }}"
+    state: directory
+
+- name: Copy configuration
+  become: true
+  copy:
+    src: "{{ item }}"
+    dest: "{{ etcd_conf_dir }}"
+    remote_src: true
+  loop:
+    - "{{ cka_dir }}/ca.pem"
+    - "{{ cka_dir }}/ca-key.pem"
+    - "{{ cka_dir }}/kubernetes.pem"
+    - "{{ cka_dir }}/kubernetes-key.pem"
+    - "{{ cka_dir }}/service-account.pem"
+    - "{{ cka_dir }}/service-account-key.pem"
+    - "{{ cka_dir }}/encryption_config.yml"

@@ -1,0 +1,12 @@
+---
+- name: Download "{{ k8s_binary }}"
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/v1.15.3/bin/linux/amd64/{{ k8s_binary }}"
+    dest: "/tmp/{{ k8s_binary }}"
+
+- name: Move "{{ k8s_binary }}"
+  become: true
+  copy:
+    src: "/tmp/{{ k8s_binary }}"
+    dest: "/usr/local/bin"
+    remote_src: true
