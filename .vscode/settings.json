@@ -4,6 +4,10 @@
     ],
     "cSpell.ignoreWords": [
         "chdir",
-        "gencert"
+        "create",
+        "dev",
+        "gencert",
+        "kubeconfigs",
+        "urandom"
     ]
 }
