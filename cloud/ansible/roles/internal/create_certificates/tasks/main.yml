@@ -1,0 +1,50 @@
+---
+- name: Set certificate directory
+  block:
+    - name: Ensure "{{ certificates_dir }}" is there
+      file:
+        path: "{{ certificates_dir }}"
+        state: directory
+        mode: "0700"
+
+    - name: Copy CSR to "{{ certificates_dir }}"
+      copy:
+        src: "files/"
+        dest: "{{ certificates_dir }}"
+
+- name: Generate root CA certificate & key
+  shell: cfssl gencert -initca ca-csr.json | cfssljson -bare ca
+  args:
+    chdir: "{{ certificates_dir }}"
+    creates: ca.pem
+
+- name: Produce all standard certificates
+  loop:
+    - "admin"
+    - "kube-controller-manager"
+    - "kube-proxy"
+    - "kube-scheduler"
+    - "service-account"
+  include_tasks: "create_standard_cert.yml"
+  vars:
+    service: "{{ item }}"
+
+- name: Handle Kubernetes API server certificate
+  include_tasks: "create_apiserver_cert.yml"
+
+- name: Handle Kubelet certificates
+  block:
+    - name: Fetch workers
+      ec2_instance_info:
+        filters:
+          tag:cka: "true"
+          tag:owner: "{{ owner }}"
+          tag:type: "worker"
+      register: workers_vm
+
+    - name: Loop on Workers
+      loop: "{{ workers_vm.instances }}"
+      include_tasks: "create_workers_cert.yml"
+      vars:
+        worker: "{{ item }}"
+        template_path: ""

@@ -1,0 +1,12 @@
+---
+- name: Generate certificate & key for "{{ service }}"
+  shell: |
+    cfssl gencert \
+    -ca=ca.pem \
+    -ca-key=ca-key.pem \
+    -config=ca-config.json \
+    -profile=kubernetes \
+    {{ service }}-csr.json | cfssljson -bare {{ service }}
+  args:
+    chdir: "{{ certificates_dir }}"
+    creates: "{{ service }}.pem"

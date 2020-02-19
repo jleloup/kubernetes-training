@@ -1,5 +1,9 @@
 {
     "cSpell.words": [
         "vagrantfile"
+    ],
+    "cSpell.ignoreWords": [
+        "chdir",
+        "gencert"
     ]
 }

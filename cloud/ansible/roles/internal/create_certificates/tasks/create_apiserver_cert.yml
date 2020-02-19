@@ -1,0 +1,22 @@
+---
+- name: Fetch EIP
+  ec2_eip_info:
+    filters:
+      tag:cka: "true"
+      tag:owner: "{{ owner }}"
+  register: apiserver_ip
+
+- name: Generate API server certificate & key
+  vars:
+    apiserver_hostnames: "{{ kubernetes_hostnames + [apiserver_ip.addresses.0.public_ip] }}"
+  shell: |
+    cfssl gencert \
+    -ca=ca.pem \
+    -ca-key=ca-key.pem \
+    -config=ca-config.json \
+    -hostname="{{ apiserver_hostnames | join(',') }}" \
+    -profile=kubernetes \
+    kubernetes-csr.json | cfssljson -bare kubernetes
+  args:
+    chdir: "{{ certificates_dir }}"
+    creates: kubernetes.pem
