@@ -1,6 +1,6 @@
 .vagrant/
 **/*.plan
-cloud/.terraform
+**/.terraform
 .vscode/
 **/*.csr
 **/*.pem

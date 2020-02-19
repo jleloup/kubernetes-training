@@ -11,7 +11,7 @@ resource "aws_instance" "masters" {
   key_name      = aws_key_pair.cka_user_key.key_name
 
   subnet_id                   = aws_subnet.cka_training.id
-  private_ip                  = "10.240.0.${count.index + 11}"
+  private_ip                  = "10.240.0.${count.index + 10}"
   associate_public_ip_address = true
 
   vpc_security_group_ids = [
@@ -40,7 +40,7 @@ resource "aws_instance" "workers" {
   key_name      = aws_key_pair.cka_user_key.key_name
 
   subnet_id                   = aws_subnet.cka_training.id
-  private_ip                  = "10.240.0.${count.index + 101}"
+  private_ip                  = "10.240.0.${count.index + 100}"
   associate_public_ip_address = true
 
   vpc_security_group_ids = [

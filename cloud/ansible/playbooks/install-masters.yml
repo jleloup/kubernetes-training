@@ -1,9 +1,0 @@
----
-- hosts: "master"
-  name: Install masters
-  gather_facts: true
-
-  tasks:
-    - name: Debug
-      debug:
-        msg: "Host to install: {{ inventory_hostname }}"
