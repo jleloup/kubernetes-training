@@ -1,0 +1,5 @@
+---
+ansible_directory: "~/ansible_provisioning"
+cka_dir: "/tmp/cka"
+packages:
+  - rsync

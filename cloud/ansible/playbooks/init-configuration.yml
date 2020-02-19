@@ -6,3 +6,8 @@
   tasks:
     - include_role:
         name: create_certificates
+      tags: certificates
+
+    - include_role:
+        name: create_kubeconfigs
+      tags: kubeconfigs

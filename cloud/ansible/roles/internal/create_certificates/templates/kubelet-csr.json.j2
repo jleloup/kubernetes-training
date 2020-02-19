@@ -1,5 +1,5 @@
 {
-    "CN": "system:node:{{ worker.private_dns_name }}",
+    "CN": "system:node:{{ worker.tags.Name }}",
     "key": {
         "algo": "rsa",
         "size": 2048

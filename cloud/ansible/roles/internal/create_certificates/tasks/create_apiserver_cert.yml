@@ -18,5 +18,5 @@
     -profile=kubernetes \
     kubernetes-csr.json | cfssljson -bare kubernetes
   args:
-    chdir: "{{ certificates_dir }}"
+    chdir: "{{ cka_dir }}"
     creates: kubernetes.pem

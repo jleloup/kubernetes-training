@@ -1,0 +1,43 @@
+---
+- name: Fetch EIP
+  ec2_eip_info:
+    filters:
+      tag:cka: "true"
+      tag:owner: "{{ owner }}"
+  register: apiserver_ip
+
+- name: Produce standard kubeconfigs
+  loop:
+    - "kube-controller-manager"
+    - "kube-proxy"
+    - "kube-scheduler"
+  include_tasks: "create_kubeconfig.yml"
+  vars:
+    service: "{{ item }}"
+    kube_user: "system:{{ item }}"
+    kube_apiserver_endpoint: "{{ apiserver_ip.addresses.0.public_ip }}"
+
+- name: Produce admin kubeconfig
+  include_tasks: "create_kubeconfig.yml"
+  vars:
+    service: "admin"
+    kube_user: "admin"
+    kube_apiserver_endpoint: 127.0.0.1
+
+- name: Handle Kubelet kubeconfigs
+  block:
+    - name: Fetch workers
+      ec2_instance_info:
+        filters:
+          tag:cka: "true"
+          tag:owner: "{{ owner }}"
+          tag:type: "worker"
+      register: workers_vm
+
+    - name: Loop on Workers
+      loop: "{{ workers_vm.instances }}"
+      include_tasks: "create_kubeconfig.yml"
+      vars:
+        service: "{{ item.tags.Name }}"
+        kube_user: "system:node:{{ item.tags.Name }}"
+        kube_apiserver_endpoint: "{{ apiserver_ip.addresses.0.public_ip }}"

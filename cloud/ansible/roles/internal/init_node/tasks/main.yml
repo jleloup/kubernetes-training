@@ -1,0 +1,17 @@
+---
+- name: Install basic packages
+  loop: "{{ packages }}"
+  package:
+    name: "{{ item }}"
+    state: present
+
+- name: Set an Ansible directory
+  file:
+    path: "{{ ansible_directory }}"
+    state: "directory"
+    mode: "0700"
+
+- name: Copy node configuration
+  copy:
+    src: "{{ cka_dir }}"
+    dest: "{{ ansible_directory }}"

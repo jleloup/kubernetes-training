@@ -1,21 +1,21 @@
 ---
 - name: Set certificate directory
   block:
-    - name: Ensure "{{ certificates_dir }}" is there
+    - name: Ensure "{{ cka_dir }}" is there
       file:
-        path: "{{ certificates_dir }}"
+        path: "{{ cka_dir }}"
         state: directory
         mode: "0700"
 
-    - name: Copy CSR to "{{ certificates_dir }}"
+    - name: Copy CSR to "{{ cka_dir }}"
       copy:
         src: "files/"
-        dest: "{{ certificates_dir }}"
+        dest: "{{ cka_dir }}"
 
 - name: Generate root CA certificate & key
   shell: cfssl gencert -initca ca-csr.json | cfssljson -bare ca
   args:
-    chdir: "{{ certificates_dir }}"
+    chdir: "{{ cka_dir }}"
     creates: ca.pem
 
 - name: Produce all standard certificates

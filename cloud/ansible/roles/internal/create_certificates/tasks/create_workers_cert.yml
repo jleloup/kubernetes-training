@@ -1,8 +1,4 @@
 ---
-- name: Debug worker
-  debug:
-    var: worker
-
 - name: Set worker name as fact
   set_fact:
     worker_name: "{{ worker.tags.Name }}"
@@ -10,7 +6,7 @@
 - name: CSR configuration for "{{ worker_name }}"
   template:
     src: "{{ role_path }}/templates/kubelet-csr.json.j2"
-    dest: "{{ certificates_dir }}/kubelet-{{ worker_name }}-csr.json"
+    dest: "{{ cka_dir }}/{{ worker_name }}-csr.json"
 
 - name: Generate certificate & key for "{{ worker_name }}"
   shell: |
@@ -20,7 +16,7 @@
      -config=ca-config.json \
      -hostname={{ worker.private_dns_name }},{{ worker.private_ip_address }},{{ worker.public_ip_address }} \
      -profile=kubernetes \
-     kubelet-{{ worker_name }}-csr.json | cfssljson -bare kubelet-{{ worker_name }}
+     {{ worker_name }}-csr.json | cfssljson -bare {{ worker_name }}
   args:
-    chdir: "{{ certificates_dir }}"
-    creates: "kubelet-{{ worker_name }}.pem"
+    chdir: "{{ cka_dir }}"
+    creates: "{{ worker_name }}.pem"
