@@ -1,15 +1,4 @@
 ---
-- name: Download etcd binary
-  get_url:
-    url: "https://github.com/etcd-io/etcd/releases/download/v3.4.0/etcd-v3.4.0-linux-amd64.tar.gz"
-    dest: "/tmp/etcd-v3.4.0-linux-amd64.tar.gz"
-
-- name: Extract etcd
-  unarchive:
-    src: "/tmp/etcd-v3.4.0-linux-amd64.tar.gz"
-    dest: "/tmp"
-    remote_src: true
-
-- name: Move etcd
-  become: true
-  shell: "mv /tmp/etcd-v3.4.0-linux-amd64/etcd* /usr/local/bin"
+- include_tasks: download_etcd.yml
+- include_tasks: configure_etcd.yml
+- include_tasks: run_etcd.yml

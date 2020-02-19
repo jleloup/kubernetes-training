@@ -1,1 +1,3 @@
 ---
+cka_dir: "/home/ubuntu/ansible_provisioning/cka"
+etcd_conf_dir: "/etc/etcd"

@@ -1,0 +1,21 @@
+---
+- name: Download etcd binary
+  get_url:
+    url: "https://github.com/etcd-io/etcd/releases/download/v3.4.0/etcd-v3.4.0-linux-amd64.tar.gz"
+    dest: "/tmp/etcd-v3.4.0-linux-amd64.tar.gz"
+
+- name: Extract etcd
+  unarchive:
+    src: "/tmp/etcd-v3.4.0-linux-amd64.tar.gz"
+    dest: "/tmp"
+    remote_src: true
+
+- name: Move etcd
+  become: true
+  copy:
+    src: "{{ item }}"
+    dest: "/usr/local/bin"
+    remote_src: true
+  loop:
+    - "/tmp/etcd-v3.4.0-linux-amd64/etcd"
+    - "/tmp/etcd-v3.4.0-linux-amd64/etcdctl"

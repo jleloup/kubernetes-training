@@ -1,0 +1,23 @@
+---
+- name: Make etcd configuration dir
+  become: true
+  file:
+    path: "{{ etcd_conf_dir }}"
+    state: directory
+
+- name: Copy certificates
+  become: true
+  copy:
+    src: "{{ item }}"
+    dest: "{{ etcd_conf_dir }}"
+    remote_src: true
+  loop:
+    - "{{ cka_dir }}/ca.pem"
+    - "{{ cka_dir }}/kubernetes.pem"
+    - "{{ cka_dir }}/kubernetes-key.pem"
+
+- name: Set etcd service
+  become: true
+  template:
+    src: "etcd.service.j2"
+    dest: "/etc/systemd/system/etcd.service"
