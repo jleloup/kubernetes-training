@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "etcd",
         "vagrantfile"
     ],
     "cSpell.ignoreWords": [
@@ -8,6 +9,8 @@
         "dev",
         "gencert",
         "kubeconfigs",
+        "timestamping",
+        "unarchive",
         "urandom"
     ]
 }

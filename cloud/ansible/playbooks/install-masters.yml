@@ -4,5 +4,10 @@
   gather_facts: true
 
   tasks:
-    - include_role:
+    - import_role:
         name: init_node
+      tags: init
+
+    - import_role:
+        name: etcd
+      tags: etcd
