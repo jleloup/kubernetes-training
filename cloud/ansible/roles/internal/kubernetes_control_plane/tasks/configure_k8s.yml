@@ -19,3 +19,27 @@
     - "{{ cka_dir }}/service-account.pem"
     - "{{ cka_dir }}/service-account-key.pem"
     - "{{ cka_dir }}/encryption_config.yml"
+
+- name: Set Kubernetes controller services
+  become: true
+  loop:
+    - kube-apiserver.service
+    - kube-controller-manager.service
+    - kube-scheduler.service
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+  vars:
+    apiserver_endpoint: "{{ hostvars.localhost.public_eip.addresses.0.public_ip }}"
+
+- name: Make Kubernetes config directory
+  become: true
+  file:
+    path: "{{ kube_config_path }}"
+    state: "directory"
+
+- name: Set Kubernetes controller services
+  become: true
+  template:
+    src: "kube-scheduler.yml.j2"
+    dest: "{{ kube_config_path }}/kube-scheduler.yml"

@@ -1,9 +1,27 @@
 ---
-- name: Install basic packages
+- name: Install system packages
+  become: true
   loop: "{{ packages }}"
   package:
     name: "{{ item }}"
     state: present
+
+- name: Install pip
+  become: true
+  block:
+    - name: Fetch Pip
+      get_url:
+        url: https://bootstrap.pypa.io/get-pip.py
+        dest: "/tmp/get-pip.py"
+
+    - name: Install Pip
+      shell: python3 /tmp/get-pip.py
+
+- name: Install Python packages
+  loop: "{{ python_packages }}"
+  pip:
+    executable: "pip3"
+    name: "{{ item }}"
 
 - name: Set an Ansible directory
   file:

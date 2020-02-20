@@ -4,15 +4,23 @@
   systemd:
     daemon_reload: yes
 
-- name: Enable etcd
+- name: Enable Kubernetes services
   become: true
+  loop:
+    - kube-apiserver.service
+    - kube-controller-manager.service
+    - kube-scheduler.service
   systemd:
-    name: etcd
+    name: "{{ item }}"
     enabled: yes
     masked: no
 
-- name: Start etcd
+- name: Start Kubernetes services
   become: true
+  loop:
+    - kube-apiserver.service
+    - kube-controller-manager.service
+    - kube-scheduler.service
   systemd:
-    name: etcd
+    name: "{{ item }}"
     state: restarted

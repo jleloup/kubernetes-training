@@ -1,3 +1,4 @@
 ---
 cka_dir: "/home/ubuntu/ansible_provisioning/cka"
 k8s_conf_dir: "/var/lib/kubernetes/"
+kube_config_path: "/etc/kubernetes/config"

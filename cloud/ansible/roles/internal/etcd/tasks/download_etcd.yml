@@ -16,6 +16,7 @@
     src: "{{ item }}"
     dest: "/usr/local/bin"
     remote_src: true
+    mode: "0700"
   loop:
     - "/tmp/etcd-v3.4.0-linux-amd64/etcd"
     - "/tmp/etcd-v3.4.0-linux-amd64/etcdctl"

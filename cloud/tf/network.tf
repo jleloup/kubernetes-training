@@ -33,13 +33,6 @@ resource "aws_security_group" "public" {
   name        = "${local.prefix}_public"
   vpc_id      = aws_vpc.vpc_kube.id
 
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = local.allowed_ips
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -57,11 +50,20 @@ resource "aws_security_group" "public" {
   }
 }
 
-resource "aws_security_group_rule" "kubernetes_api" {
+resource "aws_security_group_rule" "ssh_rule" {
   type              = "ingress"
   security_group_id = aws_security_group.public.id
   from_port         = 6443
   to_port           = 6443
+  protocol          = "tcp"
+  cidr_blocks       = local.allowed_ips
+}
+
+resource "aws_security_group_rule" "kubernetes_api_rule" {
+  type              = "ingress"
+  security_group_id = aws_security_group.public.id
+  from_port         = 22
+  to_port           = 22
   protocol          = "tcp"
   cidr_blocks       = local.allowed_ips
 }
