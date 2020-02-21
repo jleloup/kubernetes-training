@@ -10,4 +10,8 @@
     k8s_binary: "{{ item }}"
 - include_tasks: configure_k8s.yml
 - include_tasks: run_k8s.yml
+
+- pause:
+    seconds: 30
+
 - include_tasks: rbac_kubelet.yml

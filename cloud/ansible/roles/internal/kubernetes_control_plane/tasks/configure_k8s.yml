@@ -18,7 +18,7 @@
     - "{{ cka_dir }}/kubernetes-key.pem"
     - "{{ cka_dir }}/service-account.pem"
     - "{{ cka_dir }}/service-account-key.pem"
-    - "{{ cka_dir }}/encryption_config.yml"
+    - "{{ cka_dir }}/encryption-config.yaml"
     - "{{ cka_dir }}/kube-controller-manager.kubeconfig"
     - "{{ cka_dir }}/kube-scheduler.kubeconfig"
     - "{{ cka_dir }}/admin.kubeconfig"

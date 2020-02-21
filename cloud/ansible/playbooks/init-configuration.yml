@@ -14,12 +14,3 @@
     - include_role:
         name: create_kubeconfigs
       tags: kubeconfigs
-
-    - name: Generate a secret
-      shell: "head -c 32 /dev/urandom | base64"
-      register: encryption_key
-
-    - name: Create encryption config
-      template:
-        src: "encryption_config.yml.j2"
-        dest: "{{ cka_dir }}/encryption_config.yml"

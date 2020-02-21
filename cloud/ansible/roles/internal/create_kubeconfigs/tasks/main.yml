@@ -41,3 +41,26 @@
         service: "{{ item.tags.Name }}"
         kube_user: "system:node:{{ item.tags.Name }}"
         kube_apiserver_endpoint: "{{ apiserver_ip.addresses.0.public_ip }}"
+
+    - name: Generate a secret
+      shell: "head -c 32 /dev/urandom | base64"
+      register: encryption_key
+
+    - name: Create encryption config
+      shell: |
+        cat > encryption-config.yaml <<EOF
+        kind: EncryptionConfig
+        apiVersion: v1
+        resources:
+          - resources:
+              - secrets
+            providers:
+              - aescbc:
+                  keys:
+                    - name: key1
+                      secret: {{ encryption_key.stdout }}
+              - identity: {}
+        EOF
+      args:
+        chdir: "{{ cka_dir }}"
+        creates: encryption-config.yaml
