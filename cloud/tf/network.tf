@@ -65,7 +65,7 @@ resource "aws_security_group_rule" "kubernetes_api_rule" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = local.allowed_ips
+  cidr_blocks       = concat(local.allowed_ips, ["${aws_eip.apiserver_ip.public_ip}/32"])
 }
 
 resource "aws_security_group" "private" {
