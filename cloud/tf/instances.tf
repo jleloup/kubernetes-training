@@ -40,7 +40,7 @@ resource "aws_instance" "workers" {
   key_name      = aws_key_pair.cka_user_key.key_name
 
   subnet_id                   = aws_subnet.cka_training.id
-  private_ip                  = "10.240.0.${count.index + 100}"
+  private_ip                  = "10.240.0.${count.index + 20}"
   associate_public_ip_address = true
 
   vpc_security_group_ids = [
@@ -51,8 +51,9 @@ resource "aws_instance" "workers" {
   tags = merge(
     local.common_tags,
     {
-      Name = "${local.prefix}_workers_${count.index}"
-      type = "worker"
+      Name     = "${local.prefix}_workers_${count.index}"
+      type     = "worker"
+      pod_cidr = "10.200.${count.index}.0/24"
     }
   )
 

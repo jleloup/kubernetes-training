@@ -8,6 +8,7 @@
   include_tasks: download_k8s.yml
   vars:
     k8s_binary: "{{ item }}"
+
 - include_tasks: configure_k8s.yml
 - include_tasks: run_k8s.yml
 

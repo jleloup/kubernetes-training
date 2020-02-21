@@ -1,8 +1,26 @@
 ---
+- hosts: "localhost"
+  name: Fetch extra data
+  gather_facts: false
+
+  tasks:
+    - name: Fetch Elastic IP
+      ec2_eip_info:
+        filters:
+          tag:cka: "true"
+          tag:owner: "{{ owner }}"
+      register: public_eip
+      tags: always
+
 - hosts: "worker"
   name: Install worker nodes
   gather_facts: true
 
   tasks:
-    - include_role:
+    - import_role:
         name: init_node
+      tags: init
+
+    - import_role:
+        name: kubelet
+      tags: kubelet

@@ -1,0 +1,6 @@
+---
+- name: Configure CNI with bridge
+  become: true
+  template:
+    src: "cni-bridge.conf.j2"
+    dest: "/etc/cni/net.d/10-bridge.conf"

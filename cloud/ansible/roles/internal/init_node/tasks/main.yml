@@ -1,4 +1,9 @@
 ---
+- name: Run the equivalent of "apt-get update" as a separate step
+  become: true
+  apt:
+    update_cache: yes
+
 - name: Install system packages
   become: true
   loop: "{{ packages }}"

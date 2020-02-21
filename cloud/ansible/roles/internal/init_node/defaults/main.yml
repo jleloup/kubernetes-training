@@ -5,6 +5,9 @@ packages:
   - rsync
   - python3
   - nginx
+  - socat
+  - conntrack
+  - ipset
 python_packages:
   - boto3
   - openshift
