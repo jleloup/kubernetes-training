@@ -9,4 +9,5 @@
   copy:
     src: "/tmp/{{ k8s_binary }}"
     dest: "/usr/local/bin"
+    mode: "0755"
     remote_src: true

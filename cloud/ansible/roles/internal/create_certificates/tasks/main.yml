@@ -40,6 +40,7 @@
           tag:cka: "true"
           tag:owner: "{{ owner }}"
           tag:type: "worker"
+          instance-state-name: "running"
       register: workers_vm
 
     - name: Loop on Workers

@@ -1,0 +1,6 @@
+---
+- name: Set Authorization for Kubelet
+  k8s:
+    state: present
+    kubeconfig: "{{ k8s_conf_dir }}/admin.kubeconfig"
+    definition: "{{ lookup('file', 'cluster_role.yml') }}"

@@ -9,7 +9,7 @@
   become: true
   copy:
     src: "{{ item }}"
-    dest: "{{ etcd_conf_dir }}"
+    dest: "{{ k8s_conf_dir }}"
     remote_src: true
   loop:
     - "{{ cka_dir }}/ca.pem"
@@ -19,6 +19,9 @@
     - "{{ cka_dir }}/service-account.pem"
     - "{{ cka_dir }}/service-account-key.pem"
     - "{{ cka_dir }}/encryption_config.yml"
+    - "{{ cka_dir }}/kube-controller-manager.kubeconfig"
+    - "{{ cka_dir }}/kube-scheduler.kubeconfig"
+    - "{{ cka_dir }}/admin.kubeconfig"
 
 - name: Set Kubernetes controller services
   become: true
@@ -38,8 +41,22 @@
     path: "{{ kube_config_path }}"
     state: "directory"
 
-- name: Set Kubernetes controller services
+- name: Set Kubernetes scheduler configuration
   become: true
   template:
     src: "kube-scheduler.yml.j2"
     dest: "{{ kube_config_path }}/kube-scheduler.yml"
+
+- name: Set Nginx configuration
+  become: true
+  block:
+    - name: Set virtual server
+      template:
+        src: "kubernetes.default.svc.cluster.local.j2"
+        dest: "{{ nginx_config_path }}/sites-available/kubernetes.default.svc.cluster.local"
+
+    - name: Link virtual server
+      file:
+        src: "{{ nginx_config_path }}/sites-available/kubernetes.default.svc.cluster.local"
+        dest: "{{ nginx_config_path }}/sites-enabled/kubernetes.default.svc.cluster.local"
+        state: link

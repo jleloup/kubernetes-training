@@ -4,5 +4,7 @@ cka_dir: "/tmp/cka"
 packages:
   - rsync
   - python3
+  - nginx
 python_packages:
   - boto3
+  - openshift

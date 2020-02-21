@@ -10,6 +10,7 @@
     - kube-apiserver.service
     - kube-controller-manager.service
     - kube-scheduler.service
+    - nginx
   systemd:
     name: "{{ item }}"
     enabled: yes
@@ -21,6 +22,7 @@
     - kube-apiserver.service
     - kube-controller-manager.service
     - kube-scheduler.service
+    - nginx
   systemd:
     name: "{{ item }}"
     state: restarted

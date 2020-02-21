@@ -56,7 +56,13 @@ resource "aws_security_group_rule" "ssh_rule" {
   from_port         = 6443
   to_port           = 6443
   protocol          = "tcp"
-  cidr_blocks       = local.allowed_ips
+  cidr_blocks = concat(
+    local.allowed_ips,
+    [
+      "${aws_eip.apiserver_ip.public_ip}/32",
+      "10.240.0.0/16"
+    ]
+  )
 }
 
 resource "aws_security_group_rule" "kubernetes_api_rule" {
@@ -65,7 +71,7 @@ resource "aws_security_group_rule" "kubernetes_api_rule" {
   from_port         = 22
   to_port           = 22
   protocol          = "tcp"
-  cidr_blocks       = concat(local.allowed_ips, ["${aws_eip.apiserver_ip.public_ip}/32"])
+  cidr_blocks       = concat(local.allowed_ips)
 }
 
 resource "aws_security_group" "private" {
