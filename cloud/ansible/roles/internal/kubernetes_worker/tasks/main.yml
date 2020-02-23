@@ -1,0 +1,7 @@
+---
+- include_tasks: download_k8s.yml
+- include_tasks: configure_cni.yml
+- include_tasks: configure_containerd.yml
+- include_tasks: configure_kubelet.yml
+- include_tasks: configure_kube_proxy.yml
+- include_tasks: run_worker_services.yml

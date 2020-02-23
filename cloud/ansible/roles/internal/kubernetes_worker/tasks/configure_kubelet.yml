@@ -1,0 +1,27 @@
+---
+- name: Move Kubelet configuration
+  become: true
+  loop:
+    - source: "{{ cka_dir }}/{{ tags.Name }}-key.pem"
+      destination: "/var/lib/kubelet/"
+    - source: "{{ cka_dir }}/{{ tags.Name }}.pem"
+      destination: "/var/lib/kubelet/"
+    - source: "{{ cka_dir }}/{{ tags.Name }}.kubeconfig"
+      destination: "/var/lib/kubelet/kubeconfig"
+    - source: "{{ cka_dir }}/ca.pem"
+      destination: "/var/lib/kubelet/kubernetes"
+  copy:
+    remote_src: true
+    src: "{{ item.source }}"
+    dest: "{{ item.destination }}"
+
+- name: Set Kubelet configuration
+  become: true
+  loop:
+    - source: "kubelet-config.yaml.j2"
+      destination: "/var/lib/kubelet/kubelet-config.yaml"
+    - source: "kubelet.service.j2"
+      destination: "/etc/systemd/system/kubelet.service"
+  template:
+    src: "{{ item.source }}"
+    dest: "{{ item.destination }}"

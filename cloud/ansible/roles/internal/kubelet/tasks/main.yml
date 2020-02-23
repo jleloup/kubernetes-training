@@ -1,3 +1,0 @@
----
-- include_tasks: download_k8s.yml
-- include_tasks: configure_cni.yml

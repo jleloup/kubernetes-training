@@ -22,5 +22,5 @@
       tags: init
 
     - import_role:
-        name: kubelet
-      tags: kubelet
+        name: kubernetes_worker
+      tags: kubernetes
